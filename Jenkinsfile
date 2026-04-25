@@ -4,14 +4,20 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh 'python3 --version || true'
-                sh 'pip3 install --user -r requirements.txt'
+                sh '''
+                python3 -m venv venv
+                . venv/bin/activate
+                pip install -r requirements.txt
+                '''
             }
         }
 
         stage('Test') {
             steps {
-                sh '~/.local/bin/pytest'
+                sh '''
+                . venv/bin/activate
+                pytest
+                '''
             }
         }
     }
