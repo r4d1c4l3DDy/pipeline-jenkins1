@@ -8,14 +8,20 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh 'python --version'
-                sh 'pip install -r requirements.txt'
+                sh '''
+                python -m venv venv
+                . venv/bin/activate
+                pip install -r requirements.txt
+                '''
             }
         }
 
         stage('Test') {
             steps {
-                sh 'pytest'
+                sh '''
+                . venv/bin/activate
+                pytest
+                '''
             }
         }
     }
