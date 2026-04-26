@@ -6,11 +6,15 @@ pipeline {
     }
 
     stages {
-
         stage('Test (CI)') {
             steps {
                 sh '''
-                pip install -r requirements.txt
+                python -m venv venv
+                . venv/bin/activate
+
+                python -m pip install --upgrade pip
+                python -m pip install -r requirements.txt
+
                 pytest
                 '''
             }
@@ -18,28 +22,21 @@ pipeline {
 
         stage('Approval') {
             steps {
-                input message: 'Testes passaram. Deseja fazer merge na main?'
+                input message: 'Testes OK. Fazer merge na main?'
             }
         }
 
-        stage('Prepare Merge') {
+        stage('Merge') {
             steps {
                 sh '''
                 git config user.email "jenkins@local"
                 git config user.name "jenkins"
 
                 git fetch origin
-                git checkout com-docker
-
-                # opcional: remover Jenkinsfile antes do merge
-                #rm -f Jenkinsfile
-                #git add .
-                #git commit -m "remove Jenkinsfile before merge" || true
-
                 git checkout main
                 git pull origin main
 
-                git merge com-docker --no-ff -m "merge automático após aprovação Jenkins"
+                git merge sem-docker -m "merge aprovado pelo Jenkins"
 
                 git push origin main
                 '''
