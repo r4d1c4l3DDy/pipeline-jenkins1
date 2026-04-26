@@ -9,12 +9,9 @@ pipeline {
         stage('Test (CI)') {
             steps {
                 sh '''
-                python -m venv venv
-                . venv/bin/activate
-
-                python -m pip install --upgrade pip
-                python -m pip install -r requirements.txt
-
+                python --version
+                pip install --upgrade pip
+                pip install -r requirements.txt
                 pytest
                 '''
             }
